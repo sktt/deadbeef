@@ -846,6 +846,13 @@ properties_activate                (GtkMenuItem     *menuitem,
     action_show_track_properties_handler (NULL, DDB_ACTION_CTX_SELECTION);
 }
 
+static void
+show_in_folder_activate                (GtkMenuItem     *menuitem,
+                                        gpointer         user_data)
+{
+    action_show_track_in_folder_handler (NULL, DDB_ACTION_CTX_SELECTION);
+}
+
 void
 on_clear1_activate                     (GtkMenuItem     *menuitem,
                                         gpointer         user_data)
@@ -1022,6 +1029,7 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx, int iter)
     GtkWidget *paste_image;
     GtkWidget *separator9;
     GtkWidget *properties1;
+    GtkWidget *show_in_folder;
     GtkWidget *reload_metadata;
 
     GtkAccelGroup *accel_group = NULL;
@@ -1276,6 +1284,10 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx, int iter)
     gtk_widget_show (properties1);
     gtk_container_add (GTK_CONTAINER (playlist_menu), properties1);
 
+    show_in_folder = gtk_menu_item_new_with_mnemonic (_("Show In Folder"));
+    gtk_widget_show (show_in_folder);
+    gtk_container_add (GTK_CONTAINER (playlist_menu), show_in_folder);
+
     g_signal_connect ((gpointer) add_to_playback_queue1, "activate",
             G_CALLBACK (add_to_playback_queue_activate),
             NULL);
@@ -1309,6 +1321,10 @@ list_context_menu (DdbListview *listview, DdbListviewIter it, int idx, int iter)
 #endif
     g_signal_connect ((gpointer) properties1, "activate",
             G_CALLBACK (properties_activate),
+            NULL);
+
+    g_signal_connect ((gpointer) show_in_folder, "activate",
+            G_CALLBACK (show_in_folder_activate),
             NULL);
 
     gtk_menu_popup_at_pointer (GTK_MENU (playlist_menu), NULL);

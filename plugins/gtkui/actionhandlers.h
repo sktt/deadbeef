@@ -116,6 +116,8 @@ action_delete_from_disk_handler (DB_plugin_action_t *act, ddb_action_context_t c
 int
 action_show_track_properties_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
 
+void action_show_track_in_folder_handler (DB_plugin_action_t *act, ddb_action_context_t ctx);
+
 gboolean
 action_find_handler_cb (void *data);
 

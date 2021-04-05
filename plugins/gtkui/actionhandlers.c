@@ -43,6 +43,7 @@
 #include <sys/stat.h>
 #include "gtkui_api.h"
 #include <gio/gio.h>
+#include <assert.h>
 
 // disable custom title function, until we have new title formatting (0.7)
 #define DISABLE_CUSTOM_TITLE
@@ -518,6 +519,35 @@ action_show_track_properties_handler (DB_plugin_action_t *act, ddb_action_contex
     data->plt = deadbeef->action_get_playlist ();
     gdk_threads_add_idle (action_show_track_properties_handler_cb, data);
     return 0;
+}
+
+void
+action_show_track_in_folder_handler (DB_plugin_action_t *act, ddb_action_context_t ctx) {
+    ddb_playlist_t *plt = deadbeef->action_get_playlist ();
+
+    assert(ctx == DDB_ACTION_CTX_SELECTION);
+
+    DB_playItem_t *it = deadbeef->plt_get_first (plt, PL_MAIN);
+
+    char folder_path[512];
+
+    /* int selected = deadbeef->pl_getselcount(); */
+    while (it) {
+        // Not sure if this is a good idea, would you even want to select more
+        // than one item?
+        if (ctx == DDB_ACTION_CTX_PLAYLIST || deadbeef->pl_is_selected (it)) {
+            const char *uri = deadbeef->pl_find_meta (it, ":URI");
+            const char *e = strrchr (uri, '/');
+            if (!e) break;
+            strncpy(folder_path, uri, e - uri);
+            folder_path[e - uri] = 0;
+            char *args[] = {"xdg-open", folder_path, NULL};
+            g_spawn_async(NULL, args, NULL, G_SPAWN_SEARCH_PATH,NULL, NULL,NULL, NULL);
+        }
+        DB_playItem_t *next = deadbeef->pl_get_next (it, PL_MAIN);
+        it = next;
+    }
+
 }
 
 gboolean
